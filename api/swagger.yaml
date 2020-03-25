@@ -1,0 +1,520 @@
+openapi: 3.0.2
+info:
+  title: cautious-enigma
+  description: cautious-enigma
+  version: 1.0.0
+servers:
+  - url: /api
+    description: development server
+tags:
+  - name: conferences
+  - name: transcriptions
+  - name: utterances
+  - name: voip
+    description: >
+      used by the voip application to create and modify
+      transcriptions and utterances in real-time
+  - name: audio
+    description: >
+      used by the web application to request the audio
+      recording for a transcription
+
+#==============================================================================
+# Paths
+#==============================================================================
+paths:
+  #==============================================================================
+  # web: conferences
+  #==============================================================================
+  /conf:
+    #------------------------------------------------------------------------------
+    get:
+      summary: Get all conferences
+      tags:
+        - conferences
+      responses:
+        200:
+          description: List of conferences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    date_created:
+                      type: string
+                      format: date-time
+                    meeting_pin:
+                      type: integer
+                    description:
+                      type: string
+                    freeswitch_ip:
+                      type: string
+                      format: ipv4
+                  required:
+                    - id
+                    - date_created
+                    - meeting_pin
+        500:
+          description: Internal Server error
+
+    #------------------------------------------------------------------------------
+    post:
+      summary: Create a conference
+      tags:
+        - conferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/conferencePostPut'
+      responses:
+        201:
+          description: Conference created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conferenceId:
+                    type: integer
+                required:
+                  - conferenceId
+                example:
+                  conferenceId: 123
+        400:
+          description: Meeting PIN required
+        409:
+          description: A meeting with that PIN already exists
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  /conf/{conferenceId}:
+    parameters:
+      - name: conferenceId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    #------------------------------------------------------------------------------
+    get:
+      summary: Get details about one conference
+      tags:
+        - conferences
+      responses:
+        200:
+          description: Conference details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  date_created:
+                    type: string
+                    format: date-time
+                  meeting_pin:
+                    type: integer
+                  description:
+                    type: string
+                  freeswitch_ip:
+                    type: string
+                    format: ipv4
+                required:
+                  - id
+                  - date_created
+                  - meeting_pin
+        404:
+          description: Conference doesn't exist
+        500:
+          description: Internal Server error
+
+    #------------------------------------------------------------------------------
+    put:
+      summary: Update a conference
+      tags:
+        - conferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/conferencePostPut'
+      responses:
+        200:
+          description: Conference updated
+        400:
+          description: Meeting PIN required
+        404:
+          description: Conference doesn't exist
+        409:
+          description: A meeting with that PIN already exists
+        500:
+          description: Internal Server error
+
+    #------------------------------------------------------------------------------
+    delete:
+      summary: Delete a conference
+      tags:
+        - conferences
+      responses:
+        200:
+          description: Conference deleted
+        404:
+          description: Conference doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  # web: transcriptions
+  #==============================================================================
+  /conf/{conferenceId}/trans:
+    parameters:
+      - name: conferenceId
+        in: path
+        required: true
+        schema:
+          type: integer
+    #------------------------------------------------------------------------------
+    get:
+      summary: Get all transcriptions for one conference
+      tags:
+        - transcriptions
+      responses:
+        200:
+          description: List of transcription for given conference
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    time_start:
+                      type: string
+                      format: date-time
+                    time_end:
+                      type: string
+                      format: date-time
+                  required:
+                    - id
+                    - time_start
+        404:
+          description: Conference doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  /trans/{transcriptionId}:
+    parameters:
+      - name: transcriptionId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    #------------------------------------------------------------------------------
+    get:
+      summary: Get details about one transcription
+      tags:
+        - transcriptions
+      responses:
+        200:
+          description: Transcription details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  time_start:
+                    type: string
+                    format: date-time
+                  time_end:
+                    type: string
+                    format: date-time
+                required:
+                  - id
+                  - time_start
+        404:
+          description: Transcription doesn't exist
+        500:
+          description: Internal Server error
+
+    #------------------------------------------------------------------------------
+    delete:
+      summary: Delete a transcription
+      tags:
+        - transcriptions
+      responses:
+        200:
+          description: Transcription deleted
+        404:
+          description: Transcription doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  # web: utterances
+  #==============================================================================
+  /trans/{transcriptionId}/utter:
+    parameters:
+      - name: transcriptionId
+        in: path
+        required: true
+        schema:
+          type: integer
+    #------------------------------------------------------------------------------
+    get:
+      summary: Get all utterances for one transcription
+      tags:
+        - utterances
+      responses:
+        200:
+          description: List of utterances for given transcription
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    seq:
+                      type: integer
+                    speech:
+                      type: string
+                    start:
+                      type: number
+                    duration:
+                      type: number
+                    confidence:
+                      type: number
+                  required:
+                    - seq
+                    - speech
+        404:
+          description: Transcription doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  # voip
+  #==============================================================================
+  /voip/join-conference/{meetingPin}:
+    parameters:
+      - name: meetingPin
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Start a transcription for a conference based off of meeting pin
+      tags:
+        - voip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                freeswitch-ip:
+                  type: string
+              required:
+                - freeswitch-ip
+            example:
+              freeswitch-ip: 10.0.0.10
+      responses:
+        200:
+          description: Transcription in progress, FreeSWITCH IP included in response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  date_created:
+                    type: string
+                    format: date-time
+                  meeting_pin:
+                    type: integer
+                  description:
+                    type: string
+                  freeswitch_ip:
+                    type: string
+                    format: ipv4
+                required:
+                  - id
+                  - date_created
+                  - meeting_pin
+              example:
+                id: 12
+                date_created: 2019-12-16T07:52:54.922Z
+                meeting_pin: 555
+                description: Daily meeting
+                freeswitch_ip: 10.0.0.10
+        201:
+          description: Transcription started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  date_created:
+                    type: string
+                    format: date-time
+                  meeting_pin:
+                    type: integer
+                  description:
+                    type: string
+                  freeswitch_ip:
+                    type: string
+                    nullable: true
+                required:
+                  - id
+                  - date_created
+                  - meeting_pin
+              example:
+                id: 12
+                date_created: 2019-12-16T07:52:54.922Z
+                meeting_pin: 555
+                description: Daily meeting
+                freeswitch_ip: null
+        400:
+          description: FreeSWITCH IP required
+        404:
+          description: Conference doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  /voip/add-utterance/{meetingPin}:
+    parameters:
+      - name: meetingPin
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Add an utterance to a transcription based off of meeting pin
+      tags:
+        - voip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                speech:
+                  type: string
+                start:
+                  type: number
+                duration:
+                  type: number
+                confidence:
+                  type: number
+                member-id:
+                  type: number
+              required:
+                - speech
+            example:
+              speech: Hello
+              start: 2.412423
+              duration: 1.021121
+              confidence: 0.592381
+              member-id: 4
+      responses:
+        200:
+          description: Utterance added successfully
+        400:
+          description: Speech required
+        404:
+          description: \"Conference doesn't exist\" or \"No active transcription\"
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  /voip/end-transcription/{meetingPin}:
+    parameters:
+      - name: meetingPin
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    put:
+      summary: End a transcription for a conference based off of meeting pin
+      tags:
+        - voip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recording-path:
+                  type: string
+            example:
+              recording-path: /path/to/file.mp3
+      responses:
+        200:
+          description: Transcription ended successfully
+        404:
+          description: Conference doesn't exist
+        500:
+          description: Internal Server error
+
+  #==============================================================================
+  # audio
+  #==============================================================================
+  /audio/{transcriptionId}:
+    parameters:
+      - name: transcriptionId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get an audio recording for one transcription
+      tags:
+        - audio
+      responses:
+        200:
+          description: Audio recording
+          content:
+            audio/mpeg:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: \"Transcription doesn't exist\" OR \"No audio available for this transcription\"
+        500:
+          description: Internal Server error
+
+#==============================================================================
+# Components (schemas)
+#==============================================================================
+components:
+  schemas:
+    conferencePostPut:
+      type: object
+      properties:
+        meeting-pin:
+          type: integer
+        description:
+          type: string
+      required:
+        - meeting-pin
+      example:
+        meeting-pin: 555
+        description: Daily meeting

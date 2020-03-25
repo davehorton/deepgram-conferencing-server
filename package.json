@@ -1,0 +1,42 @@
+{
+  "name": "cautious-enigma",
+  "version": "1.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "NODE_ENV=production node app.js",
+    "test": "NODE_ENV=test node test/ | ./node_modules/.bin/tap-spec",
+    "postinstall": "cd client && npm install && npm run build && cd .."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davehorton/cautious-enigma.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/davehorton/cautious-enigma/issues"
+  },
+  "homepage": "https://github.com/davehorton/cautious-enigma#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "drachtio-fn-fsmrf-sugar": "0.0.9",
+    "drachtio-fsmrf": "^1.5.14",
+    "drachtio-srf": "^4.4.27",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mysql2": "^2.0.2",
+    "pino": "^5.14.0",
+    "request-debug": "^0.2.0",
+    "request-promise-native": "^1.0.8",
+    "swagger-ui-express": "^4.1.2",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "request": "^2.88.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.13.2"
+  }
+}

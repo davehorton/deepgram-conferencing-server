@@ -1,0 +1,36 @@
+#!/bin/bash
+cat << EOF > /home/admin/apps/ecosystem.config.js
+module.exports = {
+  apps : [
+  {
+    name: 'deepgram-conferencing',
+    cwd: '/home/admin/apps/deepgram-conferencing-server',
+    script: 'app.js',
+    out_file: '/home/admin/.pm2/logs/deepgram-conferencing-server.log',
+    err_file: '/home/admin/.pm2/logs/deepgram-conferencing-server.log',
+    combine_logs: true,
+    instance_var: 'INSTANCE_ID',
+    exec_mode: 'fork',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      DEEPGRAM_USERNAME: '${DEEPGRAM_USERNAME}',
+      DEEPGRAM_PASSWORD: '${DEEPGRAM_PASSWORD}',
+      DEEPGRAM_MYSQL_HOST: '${DEEPGRAM_MYSQL_HOST}',
+      DEEPGRAM_MYSQL_USER: '${DEEPGRAM_MYSQL_USER}',
+      DEEPGRAM_MYSQL_PASSWORD: '${DEEPGRAM_MYSQL_PASSWORD}',
+      DEEPGRAM_MYSQL_DATABASE: 'deepgram',
+      DEEPGRAM_MYSQL_CONNECTION_LIMIT: 10,
+      DEEPGRAM_WS_URL: 'https://cab2b5852c84ae12.deepgram.com/v2/listen/stream?encoding=linear16&sample_rate=8000',
+      DEEPGRAM_LOGLEVEL: 'info',
+      DEEPGRAM_WELCOME_PROMPT: 'conference/conf-enter_conf_number.wav',
+      DEEPGRAM_ERROR_PROMPT: 'conference/conf-bad-pin.wav',
+      DEEPGRAM_GOODBYE_PROMPT: 'conference/conf-goodbye.wav',
+      HTTP_PORT:  3000
+		},
+  }]
+};
+EOF

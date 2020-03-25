@@ -1,0 +1,24 @@
+version: '3'
+
+networks:
+  deepgram:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+services:
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./mysql/data:/var/lib/mysql:rw
+     - ./mysql/init/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    networks:
+      deepgram:
+        ipv4_address: 172.21.0.1
+
+
+ 

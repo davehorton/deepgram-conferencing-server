@@ -27,6 +27,6 @@ terraform apply -var='key_name=your-aws-ssh-key-name' \
 -var='deepgram_password=your-deepgram-password'
 ```
 
-- `key_name`: an AWS keypair that you have previously created that will be used to ssh to the instance
+- `key_name`: an AWS keypair that you have previously created that you will be use to ssh to the instance
 - `deepgram_username`: your deepgram username, which is used to authenticate to the transcription service
 - `deepgram_password`: your deepgram password, which is used to authenticate to the transcription service

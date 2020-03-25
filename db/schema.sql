@@ -40,8 +40,8 @@ CREATE TABLE `utterances`
 CREATE TABLE `participants`
   (
     `id`                INT NOT NULL AUTO_INCREMENT,
-    `time_start`   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `time_end`   TIMESTAMP,
+    `time_start`        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `time_end`          TIMESTAMP,
     `member_id`         INT NOT NULL,
     `request_id`        VARCHAR(128),
     `calling_number`    VARCHAR(128),

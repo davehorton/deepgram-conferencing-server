@@ -2,10 +2,10 @@ module.exports = {
   apps : [
   {
     name: 'deepgram-conferencing',
-    cwd: '/home/admin/apps/cautious-enigma',
+    cwd: '/home/admin/apps/deepgram-conferencing-server',
     script: 'app.js',
-    out_file: '/home/admin/.pm2/logs/cautious-enigma.log',
-    err_file: '/home/admin/.pm2/logs/cautious-enigma.log',
+    out_file: '/home/admin/.pm2/logs/deepgram-conferencing-server.log',
+    err_file: '/home/admin/.pm2/logs/deepgram-conferencing-server.log',
     combine_logs: true,
     instance_var: 'INSTANCE_ID',
     exec_mode: 'fork',

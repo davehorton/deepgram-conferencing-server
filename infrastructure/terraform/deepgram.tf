@@ -193,7 +193,7 @@ resource "aws_instance" "deepgram" {
   # create the database tables
   provisioner "remote-exec" {
     inline = [
-      "mysql -h ${aws_rds_cluster.deepgram.endpoint} -u admin -D deepgram -pdeepgramR0ck$ < /home/admin/apps/cautious-enigma/db/schema.sql",
+      "mysql -h ${aws_rds_cluster.deepgram.endpoint} -u admin -D deepgram -pdeepgramR0ck$ < /home/admin/apps/deepgram-conferencing-server/db/schema.sql",
     ]
 
     connection {

@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: cautious-enigma
-  description: cautious-enigma
+  title: deepgram-conferencing-server
+  description: deepgram-conferencing-server
   version: 1.0.0
 servers:
   - url: /api

@@ -1,5 +1,5 @@
 {
-  "name": "cautious-enigma",
+  "name": "deepgram-conferencing-server",
   "version": "1.0.1",
   "description": "",
   "main": "app.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davehorton/cautious-enigma.git"
+    "url": "git+https://github.com/davehorton/deepgram-conferencing-server.git"
   },
   "author": "",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/davehorton/cautious-enigma/issues"
+    "url": "https://github.com/davehorton/deepgram-conferencing-server/issues"
   },
-  "homepage": "https://github.com/davehorton/cautious-enigma#readme",
+  "homepage": "https://github.com/davehorton/deepgram-conferencing-server#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "drachtio-fn-fsmrf-sugar": "0.0.9",

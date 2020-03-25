@@ -41,7 +41,7 @@ CREATE TABLE `participants`
   (
     `id`                INT NOT NULL AUTO_INCREMENT,
     `time_start`        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `time_end`          TIMESTAMP DEFAULT NULL,
+    `time_end`          TIMESTAMP NULL DEFAULT NULL,
     `member_id`         INT NOT NULL,
     `request_id`        VARCHAR(128),
     `calling_number`    VARCHAR(128),

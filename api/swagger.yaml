@@ -305,6 +305,51 @@ paths:
         500:
           description: Internal Server error
 
+  /trans/{transcriptionId}/participants:
+    parameters:
+      - name: transcriptionId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get all participants for one transcription
+      tags:
+        - participants
+      responses:
+        200:
+          description: List of participants for given transcription
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    time_start:
+                      type: string
+                      format: date-time
+                    time_end:
+                      type: string
+                      format: date-time
+                    member_id:
+                      type: integer
+                    request_id:
+                      type: string
+                    calling_number:
+                      type: string
+                  required:
+                    - id
+                    - time_start
+                    - member_id
+                    - calling_number
+        404:
+          description: Transcription doesn't exist
+        500:
+          description: Internal Server error
+
   #==============================================================================
   # voip
   #==============================================================================

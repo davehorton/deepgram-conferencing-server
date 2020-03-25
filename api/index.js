@@ -24,6 +24,9 @@ router.delete('/trans/:id',      require('./transcriptions/delete'));
 // Web: Utterances
 router.get ('/trans/:id/utter', require('./utterances/get-all'));
 
+// Web: Utterances
+router.get ('/trans/:id/participants', require('./participants/get-all'));
+
 // VoIP
 router.post('/voip/join-conference/:pin', require('./voip/join-conference'));
 router.put ('/voip/end-transcription/:pin',   require('./voip/end-transcription'));

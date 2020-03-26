@@ -6,12 +6,14 @@ import H1 from '../styles/H1';
 import A from '../styles/A';
 import Button from '../styles/Button';
 import Audio from '../styles/Audio';
+import TableParticipants from '../styles/TableParticipants';
 import TableDescriptive from '../styles/TableDescriptive';
 import TableUtter from '../styles/TableUtter';
 import styled from 'styled-components';
 
 const Header = styled.header`
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 1rem;
@@ -32,6 +34,7 @@ class Utterances extends Component {
       confInfo: {},
       transInfo: {},
       utterances: [],
+      participants: [],
       minMemberId: 0,
     };
     this.shouldDisplayDate = this.shouldDisplayDate.bind(this);
@@ -49,6 +52,9 @@ class Utterances extends Component {
 
     const utterances = await axios.get(`/api/trans/${transId}/utter`);
     this.setState({ utterances: utterances.data });
+
+    const participants = await axios.get(`/api/trans/${transId}/participants`);
+    this.setState({ participants: participants.data });
 
     const minMemberId = utterances.data.reduce((acc, cur) => {
       if (acc !== 0 && !acc) return cur.member_id;
@@ -101,6 +107,46 @@ class Utterances extends Component {
             </A>
             <H1>Transcription</H1>
           </div>
+          <TableParticipants.Container>
+            <TableParticipants.Table>
+              <thead>
+                <TableParticipants.Tr>
+                  <TableParticipants.Th>Member ID</TableParticipants.Th>
+                  <TableParticipants.Th>Calling Number</TableParticipants.Th>
+                  <TableParticipants.Th>Join time</TableParticipants.Th>
+                  <TableParticipants.Th>End time</TableParticipants.Th>
+                  <TableParticipants.Th>Request ID</TableParticipants.Th>
+                </TableParticipants.Tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.participants.map(p => (
+                    <TableParticipants.Tr key={p.id}>
+                      <TableParticipants.Td>{p.id}</TableParticipants.Td>
+                      <TableParticipants.Td>{p.calling_number}</TableParticipants.Td>
+                      <TableParticipants.Td>{
+                        formatTimeDurationMMMSS(
+                          timeDifference(
+                            this.state.transInfo.time_start,
+                            p.time_start
+                          )
+                        )
+                      }</TableParticipants.Td>
+                      <TableParticipants.Td>{
+                        formatTimeDurationMMMSS(
+                          timeDifference(
+                            this.state.transInfo.time_start,
+                            p.time_end
+                          )
+                        )
+                      }</TableParticipants.Td>
+                      <TableParticipants.Td>{p.request_id}</TableParticipants.Td>
+                    </TableParticipants.Tr>
+                  ))
+                }
+              </tbody>
+            </TableParticipants.Table>
+          </TableParticipants.Container>
           <TableDescriptive.Table>
             <tbody>
               <tr>

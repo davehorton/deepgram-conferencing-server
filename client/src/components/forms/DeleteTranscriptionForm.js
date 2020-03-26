@@ -3,7 +3,7 @@ import axios from 'axios';
 import Modal from '../../styles/Modal';
 import Button, { ButtonContainer } from '../../styles/Button';
 import ErrorMessage from '../../styles/ErrorMessage';
-import DescriptiveTable from '../../styles/DescriptiveTable';
+import TableDescriptive from '../../styles/TableDescriptive';
 import { datetime } from '../../util/date-format';
 
 class DeleteTranscriptionForm extends Component {
@@ -43,22 +43,22 @@ class DeleteTranscriptionForm extends Component {
         <Modal.Foreground onClick={this.stopPropagation}>
           <Modal.Header>Delete Transcription</Modal.Header>
           <form onSubmit={this.handleSubmit}>
-            <DescriptiveTable.Table>
+            <TableDescriptive.Table>
               <tbody>
                 <tr>
-                  <DescriptiveTable.LightTd>Conference:</DescriptiveTable.LightTd>
+                  <TableDescriptive.LightTd>Conference:</TableDescriptive.LightTd>
                   <td>{this.props.conference.meeting_pin}: {this.props.conference.description}</td>
                 </tr>
                 <tr>
-                  <DescriptiveTable.LightTd>Start time:</DescriptiveTable.LightTd>
+                  <TableDescriptive.LightTd>Start time:</TableDescriptive.LightTd>
                   <td>{datetime(this.props.transcription.time_start)}</td>
                 </tr>
                 <tr>
-                  <DescriptiveTable.LightTd>End time:</DescriptiveTable.LightTd>
+                  <TableDescriptive.LightTd>End time:</TableDescriptive.LightTd>
                   <td>{datetime(this.props.transcription.time_end) || 'Still in progress'}</td>
                 </tr>
               </tbody>
-            </DescriptiveTable.Table>
+            </TableDescriptive.Table>
             <ErrorMessage>
               {
                 this.state.errorMessage ||

@@ -5,124 +5,21 @@ import Main from '../styles/Main';
 import H1 from '../styles/H1';
 import A from '../styles/A';
 import Button from '../styles/Button';
-import Table from '../styles/Table';
 import Audio from '../styles/Audio';
-import DescriptiveTable from '../styles/DescriptiveTable';
+import TableParticipants from '../styles/TableParticipants';
+import TableDescriptive from '../styles/TableDescriptive';
+import TableUtter from '../styles/TableUtter';
 import styled from 'styled-components';
 
 const Header = styled.header`
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 1rem;
   @media (max-width: 700px) {
     padding: 0.5rem;
   }
-`;
-
-const UtterTable = {};
-UtterTable.Table = styled(Table.Table)`
-  width: 100%;
-  margin: 0;
-  table-layout: auto;
-  border: none;
-`;
-UtterTable.DateLineTr = styled.tr``;
-UtterTable.TheadTr = styled.tr`
-  background: #333;
-  @media (max-width: 700px) {
-    display: flex;
-    justify-content: space-around;
-  }
-`;
-UtterTable.Tr = styled.tr`
-  position: relative;
-  border-top: 1px solid #ccc;
-  ${UtterTable.DateLineTr} + & {
-    border-top: none;
-  }
-  @media (max-width: 700px) {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-UtterTable.Th = styled(Table.Th)`
-  color: #fff;
-  padding: 0 0.5rem;
-  &:first-child,
-  &:last-child {
-    width: unset;
-  }
-  &:nth-child(4) {
-    text-align: right;
-  }
-  @media (max-width: 700px) {
-    padding: 0;
-    font-size: 0.9rem;
-  }
-`;
-UtterTable.Td = styled(Table.Td)`
-  padding: 0.5rem;
-  &:first-child,
-  &:nth-child(2) {
-    width: 6rem;
-    color: #777;
-  }
-  &:nth-child(4),
-  &:nth-child(5) {
-    text-align: right
-    color: #777;
-  }
-  @media (max-width: 700px) {
-    &:first-child {
-      padding-bottom: 0;
-    }
-    &:nth-child(2) {
-      position: absolute;
-      top: 0;
-      left: 4rem;
-    }
-    &:nth-child(3) {
-      padding-bottom: 1rem;
-    }
-    &:nth-child(4) {
-      position: absolute;
-      top: 0;
-      right: 5rem;
-    }
-    &:nth-child(5) {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 5rem;
-    }
-  }
-`;
-UtterTable.NoResultsTd = styled.td`
-  padding: 4rem;
-  text-align: center;
-`;
-UtterTable.DateLineTd = styled(UtterTable.Td)`
-  text-align: center;
-  padding: 0.5rem 0;
-  color: #777;
-  &:after {
-    content: '';
-    box-sizing: border-box;
-    border-left: 0.5rem solid #fff;
-    border-right: 0.5rem solid #fff;
-    width: 100%;
-    height: 1px;
-    background: #aaa;
-    position: absolute;
-    top: 49%;
-    left: 0;
-    z-index: -1;
-  }
-`;
-UtterTable.DateLineDate = styled.span`
-  padding: 0.5rem;
-  background: #fff;
 `;
 
 const AudioWrapper = styled.div`
@@ -137,6 +34,7 @@ class Utterances extends Component {
       confInfo: {},
       transInfo: {},
       utterances: [],
+      participants: [],
       minMemberId: 0,
     };
     this.shouldDisplayDate = this.shouldDisplayDate.bind(this);
@@ -154,6 +52,9 @@ class Utterances extends Component {
 
     const utterances = await axios.get(`/api/trans/${transId}/utter`);
     this.setState({ utterances: utterances.data });
+
+    const participants = await axios.get(`/api/trans/${transId}/participants`);
+    this.setState({ participants: participants.data });
 
     const minMemberId = utterances.data.reduce((acc, cur) => {
       if (acc !== 0 && !acc) return cur.member_id;
@@ -206,10 +107,50 @@ class Utterances extends Component {
             </A>
             <H1>Transcription</H1>
           </div>
-          <DescriptiveTable.Table>
+          <TableParticipants.Container>
+            <TableParticipants.Table>
+              <thead>
+                <TableParticipants.Tr>
+                  <TableParticipants.Th>Member ID</TableParticipants.Th>
+                  <TableParticipants.Th>Calling Number</TableParticipants.Th>
+                  <TableParticipants.Th>Join time</TableParticipants.Th>
+                  <TableParticipants.Th>End time</TableParticipants.Th>
+                  <TableParticipants.Th>Request ID</TableParticipants.Th>
+                </TableParticipants.Tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.participants.map(p => (
+                    <TableParticipants.Tr key={p.member_id}>
+                      <TableParticipants.Td>{p.member_id}</TableParticipants.Td>
+                      <TableParticipants.Td>{p.calling_number}</TableParticipants.Td>
+                      <TableParticipants.Td>{
+                        formatTimeDurationMMMSS(
+                          timeDifference(
+                            this.state.transInfo.time_start,
+                            p.time_start
+                          )
+                        )
+                      }</TableParticipants.Td>
+                      <TableParticipants.Td>{
+                        formatTimeDurationMMMSS(
+                          timeDifference(
+                            this.state.transInfo.time_start,
+                            p.time_end
+                          )
+                        )
+                      }</TableParticipants.Td>
+                      <TableParticipants.Td>{p.request_id}</TableParticipants.Td>
+                    </TableParticipants.Tr>
+                  ))
+                }
+              </tbody>
+            </TableParticipants.Table>
+          </TableParticipants.Container>
+          <TableDescriptive.Table>
             <tbody>
               <tr>
-                <DescriptiveTable.LightTd>Conference:</DescriptiveTable.LightTd>
+                <TableDescriptive.LightTd>Conference:</TableDescriptive.LightTd>
                 <td>
                   {this.state.confInfo.meeting_pin}:
                   {' '}
@@ -217,11 +158,11 @@ class Utterances extends Component {
                 </td>
               </tr>
               <tr>
-                <DescriptiveTable.LightTd>Start Time:</DescriptiveTable.LightTd>
+                <TableDescriptive.LightTd>Start Time:</TableDescriptive.LightTd>
                 <td>{datetime(this.state.transInfo.time_start)}</td>
               </tr>
               <tr>
-                <DescriptiveTable.LightTd>End Time:</DescriptiveTable.LightTd>
+                <TableDescriptive.LightTd>End Time:</TableDescriptive.LightTd>
                 <td>
                   {
                     this.state.transInfo.time_end
@@ -233,7 +174,7 @@ class Utterances extends Component {
               {
                 this.state.transInfo.time_end
                   ? <tr>
-                      <DescriptiveTable.LightTd>Duration:</DescriptiveTable.LightTd>
+                      <TableDescriptive.LightTd>Duration:</TableDescriptive.LightTd>
                       <td>
                         {
                           formatTimeDuration(timeDifference(
@@ -246,7 +187,7 @@ class Utterances extends Component {
                   : null
               }
             </tbody>
-          </DescriptiveTable.Table>
+          </TableDescriptive.Table>
         </Header>
         {
           this.state.audioExists
@@ -264,31 +205,31 @@ class Utterances extends Component {
               </AudioWrapper>
             : <Header>No audio recording available for this transcription</Header>
         }
-        <UtterTable.Table>
+        <TableUtter.Table>
           <thead>
-            <UtterTable.TheadTr>
-              <UtterTable.Th>Time</UtterTable.Th>
-              <UtterTable.Th>Member ID</UtterTable.Th>
-              <UtterTable.Th>Speech</UtterTable.Th>
-              <UtterTable.Th>Duration</UtterTable.Th>
-              <UtterTable.Th>Confidence</UtterTable.Th>
-            </UtterTable.TheadTr>
+            <TableUtter.TheadTr>
+              <TableUtter.Th>Time</TableUtter.Th>
+              <TableUtter.Th>Member ID</TableUtter.Th>
+              <TableUtter.Th>Speech</TableUtter.Th>
+              <TableUtter.Th>Duration</TableUtter.Th>
+              <TableUtter.Th>Confidence</TableUtter.Th>
+            </TableUtter.TheadTr>
           </thead>
           <tbody>
-            <UtterTable.DateLineTr>
-              <UtterTable.DateLineTd colSpan="5">
-                <UtterTable.DateLineDate>
+            <TableUtter.DateLineTr>
+              <TableUtter.DateLineTd colSpan="5">
+                <TableUtter.DateLineDate>
                   Started {dateOnly(this.state.transInfo.time_start)} at {timeOnly(this.state.transInfo.time_start)}
-                </UtterTable.DateLineDate>
-              </UtterTable.DateLineTd>
-            </UtterTable.DateLineTr>
+                </TableUtter.DateLineDate>
+              </TableUtter.DateLineTd>
+            </TableUtter.DateLineTr>
             {
               this.state.utterances.length
                 ? null
                 : <tr>
-                    <UtterTable.NoResultsTd colSpan="5" noResults>
+                    <TableUtter.NoResultsTd colSpan="5" noResults>
                       There were no utterances during this transcription
-                    </UtterTable.NoResultsTd>
+                    </TableUtter.NoResultsTd>
                   </tr>
             }
             {
@@ -296,43 +237,43 @@ class Utterances extends Component {
                 <React.Fragment key={u.seq}>
                   {
                     this.shouldDisplayDate(u)
-                      ? <UtterTable.DateLineTr>
-                          <UtterTable.DateLineTd colSpan="5">
-                            <UtterTable.DateLineDate>
+                      ? <TableUtter.DateLineTr>
+                          <TableUtter.DateLineTd colSpan="5">
+                            <TableUtter.DateLineDate>
                               {dateOnly(getTimeOffset(this.state.transInfo.time_start, u.start))}
-                            </UtterTable.DateLineDate>
-                          </UtterTable.DateLineTd>
-                        </UtterTable.DateLineTr>
+                            </TableUtter.DateLineDate>
+                          </TableUtter.DateLineTd>
+                        </TableUtter.DateLineTr>
                       : null
                   }
-                  <UtterTable.Tr>
-                    <UtterTable.Td>
+                  <TableUtter.Tr>
+                    <TableUtter.Td>
                       {formatTimeDurationMMMSS(timeDifference(this.state.transInfo.time_start,u.start_timestamp))}
-                    </UtterTable.Td>
-                    <UtterTable.Td>{this.memberIdAdjustment(u.member_id)}</UtterTable.Td>
-                    <UtterTable.Td>{u.speech}</UtterTable.Td>
-                    <UtterTable.Td>{formatTimeDuration(u.duration, 1)}</UtterTable.Td>
-                    <UtterTable.Td>{
+                    </TableUtter.Td>
+                    <TableUtter.Td>{this.memberIdAdjustment(u.member_id)}</TableUtter.Td>
+                    <TableUtter.Td>{u.speech}</TableUtter.Td>
+                    <TableUtter.Td>{formatTimeDuration(u.duration, 1)}</TableUtter.Td>
+                    <TableUtter.Td>{
                       u.confidence
                         ? parseFloat(u.confidence).toFixed(3)
                         : null
-                      }</UtterTable.Td>
-                  </UtterTable.Tr>
+                      }</TableUtter.Td>
+                  </TableUtter.Tr>
                 </React.Fragment>
               ))
             }
-            <UtterTable.DateLineTr>
-              <UtterTable.DateLineTd colSpan="5">
-                <UtterTable.DateLineDate>
+            <TableUtter.DateLineTr>
+              <TableUtter.DateLineTd colSpan="5">
+                <TableUtter.DateLineDate>
                   {
                     this.state.transInfo.time_end
                       ? `Ended ${dateOnly(this.state.transInfo.time_end)} at ${timeOnly(this.state.transInfo.time_end)}`
                       : 'Conference is still in progress'}
-                </UtterTable.DateLineDate>
-              </UtterTable.DateLineTd>
-            </UtterTable.DateLineTr>
+                </TableUtter.DateLineDate>
+              </TableUtter.DateLineTd>
+            </TableUtter.DateLineTr>
           </tbody>
-        </UtterTable.Table>
+        </TableUtter.Table>
       </Main>
     );
   }

@@ -121,8 +121,8 @@ class Utterances extends Component {
               <tbody>
                 {
                   this.state.participants.map(p => (
-                    <TableParticipants.Tr key={p.id}>
-                      <TableParticipants.Td>{p.id}</TableParticipants.Td>
+                    <TableParticipants.Tr key={p.member_id}>
+                      <TableParticipants.Td>{p.member_id}</TableParticipants.Td>
                       <TableParticipants.Td>{p.calling_number}</TableParticipants.Td>
                       <TableParticipants.Td>{
                         formatTimeDurationMMMSS(

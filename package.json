@@ -24,7 +24,7 @@
     "drachtio-fsmrf": "^1.5.14",
     "drachtio-srf": "^4.4.27",
     "express": "^4.17.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mysql2": "^2.0.2",
     "pino": "^5.14.0",
     "request-debug": "^0.2.0",

@@ -23,7 +23,7 @@
     "drachtio-fn-fsmrf-sugar": "0.0.9",
     "drachtio-fsmrf": "^1.5.14",
     "drachtio-srf": "^4.4.27",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "moment": "^2.24.0",
     "mysql2": "^2.0.2",
     "pino": "^5.14.0",
